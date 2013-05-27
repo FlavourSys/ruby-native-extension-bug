@@ -9,4 +9,5 @@ To try it:
   * rake compile (Produces an error)
 
 To fix the bug:
-  * patch MakeMakefile.link_command() to reverse order of libraries
+  * patch MakeMakefile.link_command() to reverse order of libraries with
+    patch file in ext/good
