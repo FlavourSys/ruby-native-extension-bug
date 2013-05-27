@@ -1,0 +1,27 @@
+--- extconf.rb	2013-05-27 17:44:08.313950702 +0200
++++ extconf_new.rb	2013-05-27 18:19:26.222023831 +0200
+@@ -1,8 +1,21 @@
+ require 'mkmf'
+ 
+-# unless find_executable('g++')
+-#   abort 'Error: could not find g++'
+-# end
++def link_command(ldflags, opt="", libpath=$DEFLIBPATH|$LIBPATH)
++  librubyarg = $extmk ? $LIBRUBYARG_STATIC : "$(LIBRUBYARG)"
++  conf = RbConfig::CONFIG.merge('hdrdir' => $hdrdir.quote,
++                                'src' => "#{CONFTEST_C}",
++                                'arch_hdrdir' => $arch_hdrdir.quote,
++                                'top_srcdir' => $top_srcdir.quote,
++                                'INCFLAGS' => "#$INCFLAGS",
++                                'CPPFLAGS' => "#$CPPFLAGS",
++                                'CFLAGS' => "#$CFLAGS",
++                                'ARCH_FLAG' => "#$ARCH_FLAG",
++                                'LDFLAGS' => "#$LDFLAGS #{ldflags}",
++                                'LOCAL_LIBS' => "#$LOCAL_LIBS #$libs",
++                                'LIBS' => "#{opt} #$LIBS #{librubyarg}")
++  conf['LIBPATH'] = libpathflag(libpath.map {|s| RbConfig::expand(s.dup, conf)})
++  RbConfig::expand(TRY_LINK.dup, conf)
++end
+ 
+ fail_lib_dir = File.expand_path(File.join(File.dirname(__FILE__), '../../lib'))
+ fail_inc_dir = File.expand_path(File.join(File.dirname(__FILE__), '../libfail'))
